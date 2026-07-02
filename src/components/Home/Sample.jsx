@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -34,89 +34,78 @@ const sections = [
     },
 ];
 
-export default function Slides() {
+const ImageSlider = () => {
     const wrapperRef = useRef(null);
 
     useEffect(() => {
-        const panels = gsap.utils.toArray(".section");
-        panels.pop();
+        const ctx = gsap.context(() => {
+            const panels = gsap.utils.toArray(".section");
+            panels.pop();
 
-        panels.forEach((panel) => {
-            const innerpanel = panel.querySelector(".section-inner");
-            const panelHeight = innerpanel.offsetHeight;
-            const windowHeight = window.innerHeight;
+            panels.forEach((panel) => {
+                const innerpanel = panel.querySelector(".section-inner");
+                const panelHeight = innerpanel.offsetHeight;
+                const windowHeight = window.innerHeight;
 
-            const difference = panelHeight - windowHeight;
+                const difference = panelHeight - windowHeight;
 
-            const fakeScrollRatio =
-                difference > 0
-                    ? difference / (difference + windowHeight)
-                    : 0;
+                const fakeScrollRatio =
+                    difference > 0
+                        ? difference / (difference + windowHeight)
+                        : 0;
 
-            if (fakeScrollRatio) {
-                panel.style.marginBottom =
-                    panelHeight * fakeScrollRatio + "px";
-            }
-
-            const tl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: panel,
-                    start: "bottom bottom",
-                    end: () =>
-                        fakeScrollRatio
-                            ? `+=${innerpanel.offsetHeight}`
-                            : "bottom top",
-                    pinSpacing: false,
-                    pin: true,
-                    scrub: true,
-                },
-            });
-
-            if (fakeScrollRatio) {
-                tl.to(innerpanel, {
-                    yPercent: -100,
-                    y: window.innerHeight,
-                    duration: 1 / (1 - fakeScrollRatio) - 1,
-                    ease: "none",
-                });
-            }
-
-            tl.fromTo(
-                panel,
-                { scale: 1, opacity: 1 },
-                {
-                    scale: 0.7,
-                    opacity: 0.5,
-                    duration: 0.9,
+                if (fakeScrollRatio) {
+                    panel.style.marginBottom =
+                        panelHeight * fakeScrollRatio + "px";
                 }
-            ).to(panel, {
-                opacity: 0,
-                duration: 0.1,
-            });
-        });
 
-        return () => ScrollTrigger.getAll().forEach((t) => t.kill());
+                const tl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: panel,
+                        start: "bottom bottom",
+                        end: () =>
+                            fakeScrollRatio
+                                ? `+=${innerpanel.offsetHeight}`
+                                : "bottom top",
+                        pinSpacing: false,
+                        pin: true,
+                        scrub: true,
+                    },
+                });
+
+                if (fakeScrollRatio) {
+                    tl.to(innerpanel, {
+                        yPercent: -100,
+                        y: window.innerHeight,
+                        duration: 1 / (1 - fakeScrollRatio) - 1,
+                        ease: "none",
+                    });
+                }
+
+                tl.fromTo(
+                    panel,
+                    { scale: 1, opacity: 1 },
+                    { scale: 0.7, opacity: 0.5, duration: 0.9 }
+                ).to(panel, {
+                    opacity: 0,
+                    duration: 0.1,
+                });
+            });
+        }, wrapperRef);
+
+        return () => ctx.revert();
     }, []);
 
     return (
-        <div className="overflow-x-hidden overflow-y-scroll h-screen">
-            {/* Fixed Navbar */}
-            <nav className="fixed top-0 z-[999] flex h-16 w-full items-center justify-between bg-black px-6 text-white">
-                <div className="font-bold">Logo</div>
-                <div className="flex gap-6">
-                    <a href="/">Home</a>
-                    <a href="/">About</a>
-                </div>
-            </nav>
+        <div>
 
-            {/* Slides Wrapper */}
-            <div ref={wrapperRef} className="mt-16">
+            <div ref={wrapperRef} className="mt-2 mx-19">
                 {sections.map((section, index) => (
                     <section
                         key={index}
                         className={`section relative flex h-[calc(100vh-64px)] w-full justify-center overflow-hidden rounded-[10px] text-center text-[1.5em] font-semibold ${section.bg} ${section.text}`}
                     >
-                        <div className="section-content w-full h-full">
+                        <div className="section-content h-full w-full">
                             <div
                                 className={`section-inner flex h-full flex-col items-center overflow-hidden ${section.type === "text" ? "h-auto pb-[20vh]" : ""
                                     }`}
@@ -139,7 +128,9 @@ export default function Slides() {
                                                 scrollable within before the next slide comes in.
                                             </p>
                                         ))}
-                                        <p className="max-w-[40ch] p-8">This is the end...</p>
+                                        <p className="max-w-[40ch] p-8">
+                                            This is the end...
+                                        </p>
                                     </>
                                 )}
                             </div>
@@ -149,4 +140,6 @@ export default function Slides() {
             </div>
         </div>
     );
-}
+};
+
+export default ImageSlider;
