@@ -1,11 +1,17 @@
-const PORTFOLIO = [
-    {
-        title: "THE HOUSE THAT BREATHES",
-        year: "2025",
-        status: "In-Progress",
-        img: "https://inspatia.in/wp-content/uploads/2025/08/1-4-1.jpg",
-        href: "#",
-    },
-];
+import React from 'react'
+import PortfolioHero from '../components/Portfolio/PortfolioHero'
+import PortfolioProjects from '../components/Portfolio/PortfolioProjects'
+import FilterButton from '../components/Portfolio/FilterButton'
 
-export default PORTFOLIO;
+const Portfolio = () => {
+    return (
+        <>
+            <div className="w-full h-screen bg-[#F9F9F9]">
+                <PortfolioHero />
+                <PortfolioProjects />
+            </div>
+        </>
+    )
+}
+
+export default Portfolio

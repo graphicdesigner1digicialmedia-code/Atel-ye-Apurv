@@ -15,8 +15,8 @@ const FullscreenMenu = ({ menuOpen, setMenuOpen }) => {
     return (
         <div
             className={`fixed inset-0 bg-black z-[100] transition-all duration-700 ease-in-out ${menuOpen
-                    ? "opacity-100 visible pointer-events-auto"
-                    : "opacity-0 invisible pointer-events-none"
+                ? "opacity-100 visible pointer-events-auto"
+                : "opacity-0 invisible pointer-events-none"
                 }`}
         >
             {/* MENU CONTAINER */}

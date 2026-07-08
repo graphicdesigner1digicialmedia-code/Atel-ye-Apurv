@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
-const Hero = () => {
+const Hero = ({ firstLine, secondLine, paragraph, leftBottomText, leftBottomIcon, rightBottomText }) => {
     const heroRef = useRef([]);
 
     useEffect(() => {
@@ -43,7 +43,7 @@ const Hero = () => {
                         xl:text-[25px]
                     "
                 >
-                    Top Architecture and Interior
+                    {firstLine}
                 </h1>
 
                 {/* SECOND LINE */}
@@ -63,7 +63,7 @@ const Hero = () => {
                         xl:text-[25px]
                     "
                 >
-                    Design Firm in India
+                    {secondLine}
                 </h1>
 
                 {/* SUBTEXT */}
@@ -71,7 +71,7 @@ const Hero = () => {
                     ref={(el) => (heroRef.current[2] = el)}
                     className="
                         mt-4
-                        w-[90%]
+                        w-[100%]
                         max-w-[1400px]
                         text-center
                         text-white/60
@@ -80,8 +80,7 @@ const Hero = () => {
                         leading-relaxed
                     "
                 >
-                    We are a design studio specializing in architecture and interiors,
-                    redefining the art of spatial storytelling with bold ideas and creative exploration.
+                    {paragraph}
                 </p>
             </div>
 
@@ -93,16 +92,17 @@ const Hero = () => {
                     ref={(el) => (heroRef.current[3] = el)}
                     className="flex items-center gap-4"
                 >
+
                     <span className="text-[18px] font-medium">
-                        Scroll to Explore
+                        {leftBottomText}
                     </span>
-                    <span className="text-[22px]">⌄</span>
+                    <span className="text-[22px]">{leftBottomIcon}</span>
                 </div>
 
                 {/* RIGHT */}
                 <div ref={(el) => (heroRef.current[4] = el)}>
                     <span className="text-[18px] font-medium">
-                        Featured Projects
+                        {rightBottomText}
                     </span>
                 </div>
 

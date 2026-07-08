@@ -9,7 +9,10 @@ const App = () => {
     <>
       {/* Custom Cursor */}
       <CustomCursor />
-      <Home />
+      <Header />
+      <AppRouter />
+      <Footer />
+      {/* <Home /> */}
     </>
   );
 };
