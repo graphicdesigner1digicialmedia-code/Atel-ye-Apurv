@@ -5,8 +5,8 @@ import FilterButton from './FilterButton'
 const PortfolioProjects = () => {
   return (
     <>
-      <FilterButton />
-      <PortfolioFilter />
+      {/* <FilterButton /> */}
+      {/* <PortfolioFilter /> */}
     </>
   )
 }

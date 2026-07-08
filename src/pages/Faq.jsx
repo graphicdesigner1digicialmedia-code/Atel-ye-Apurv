@@ -1,8 +1,11 @@
 import React from 'react'
+import FAQSHero from '../components/FAQS/FAQSHero'
 
 const Faq = () => {
     return (
-        <div>Faq</div>
+        <>
+            <FAQSHero />
+        </>
     )
 }
 

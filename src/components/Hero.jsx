@@ -80,6 +80,7 @@ const Hero = ({ firstLine, secondLine, paragraph, leftBottomText, leftBottomIcon
                         leading-relaxed
                     "
                 >
+
                     {paragraph}
                 </p>
             </div>

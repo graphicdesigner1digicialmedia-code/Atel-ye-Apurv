@@ -7,9 +7,9 @@ import Paragraph from "../components/Home/Paragraph";
 import Button from "../components/Button";
 import Sample from "../components/Home/Sample";
 import Work from "../components/Home/Work";
-import Info from "../components/Home/Info";
+import Info from "../components/Info";
 import ShortParagraph from "../components/Home/ShortParagraph";
-import StretchText from "../components/Home/StretchText";
+import HomeStretchText from "../components/Home/HomeStretchText";
 
 const Home = () => {
     return (
@@ -22,7 +22,7 @@ const Home = () => {
             <Work />
             <Info />
             <ShortParagraph />
-            <StretchText />
+            <HomeStretchText />
         </>
     );
 };
