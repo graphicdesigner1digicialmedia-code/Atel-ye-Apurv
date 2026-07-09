@@ -1,5 +1,4 @@
 import Hero from "../Hero";
-import FilterButton from "./FilterButton";
 
 const PortfolioHero = () => {
     return (
@@ -11,7 +10,6 @@ const PortfolioHero = () => {
             }
             leftBottomText="Scroll to Explore"
             leftBottomIcon="⌄"
-            rightBottomText={<FilterButton />}
         />
     );
 };

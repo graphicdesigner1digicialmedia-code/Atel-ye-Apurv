@@ -156,7 +156,7 @@ export default function StretchText({ text = "CONTACT" }) {
 
             <div
                 ref={wrapRef}
-                className="fixed left-0 top-0 pointer-events-none z-[9999]"
+                className="fixed left-0 top-0 pointer-events-none z-9999"
             >
                 <div
                     ref={cursorRef}
@@ -171,7 +171,7 @@ export default function StretchText({ text = "CONTACT" }) {
                         flex
                         items-center
                         justify-center
-                        bg-gradient-to-b
+                        bg-linear-to-b
                         from-white
                         via-neutral-200
                         to-neutral-400
