@@ -1,7 +1,14 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
-const Hero = ({ firstLine, secondLine, paragraph, leftBottomText, leftBottomIcon, rightBottomText }) => {
+const Hero = ({
+    firstLine,
+    secondLine,
+    paragraph,
+    leftBottomText,
+    leftBottomIcon,
+    rightBottomText,
+}) => {
     const heroRef = useRef([]);
 
     useEffect(() => {
@@ -22,91 +29,142 @@ const Hero = ({ firstLine, secondLine, paragraph, leftBottomText, leftBottomIcon
     }, []);
 
     return (
-        <section className="relative h-screen w-full bg-black text-white flex flex-col items-center justify-center overflow-hidden px-8">
+        <section className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-black px-6 text-white sm:px-8 lg:px-16">
 
-            {/* HERO TEXT */}
-            <div className="flex flex-col items-center">
+            {/* Hero Text */}
+            <div className="flex flex-col items-center text-center">
 
-                {/* FIRST LINE */}
+                {/* First Line */}
                 <h1
                     ref={(el) => (heroRef.current[0] = el)}
                     className="
                         font-anton
                         uppercase
-                        text-[30px]
-                        tracking-[45px]
-                        leading-[4]
-                        text-center
-                        sm:text-[25px]
-                        md:text-[25px]
-                        lg:text-[25px]
-                        xl:text-[25px]
+                        leading-tight
+
+                        text-xl
+                        tracking-[8px]
+
+                        sm:text-2xl
+                        sm:tracking-[12px]
+
+                        md:text-3xl
+                        md:tracking-[18px]
+
+                        lg:text-4xl
+                        lg:tracking-[28px]
+
+                        xl:text-[42px]
+                        xl:tracking-[40px]
                     "
                 >
                     {firstLine}
                 </h1>
 
-                {/* SECOND LINE */}
-                <h1
-                    ref={(el) => (heroRef.current[1] = el)}
-                    className="
-                        font-anton
-                        uppercase
-                        text-[30px]
-                        tracking-[45px]
-                        leading-[1.8]
-                        text-center
-                        -mt-8
-                        sm:text-[25px]
-                        md:text-[25px]
-                        lg:text-[25px]
-                        xl:text-[25px]
-                    "
-                >
-                    {secondLine}
-                </h1>
+                {/* Second Line */}
+                {secondLine && (
+                    <h1
+                        ref={(el) => (heroRef.current[1] = el)}
+                        className="
+                            mt-2
+                            font-anton
+                            uppercase
+                            leading-tight
 
-                {/* SUBTEXT */}
-                <p
-                    ref={(el) => (heroRef.current[2] = el)}
-                    className="
-                        mt-4
-                        w-[100%]
-                        max-w-[1400px]
-                        text-center
-                        text-white/60
-                        text-[20px]
-                        font-normal
-                        leading-relaxed
-                    "
-                >
+                            text-xl
+                            tracking-[8px]
 
-                    {paragraph}
-                </p>
+                            sm:text-2xl
+                            sm:tracking-[12px]
+
+                            md:text-3xl
+                            md:tracking-[18px]
+
+                            lg:text-4xl
+                            lg:tracking-[28px]
+
+                            xl:text-[42px]
+                            xl:tracking-[40px]
+                        "
+                    >
+                        {secondLine}
+                    </h1>
+                )}
+
+                {/* Paragraph */}
+                {paragraph && (
+                    <p
+                        ref={(el) => (heroRef.current[2] = el)}
+                        className="
+                            mt-6
+                            max-w-xs
+                            text-center
+                            text-sm
+                            leading-relaxed
+                            text-white/60
+
+                            sm:max-w-lg
+                            sm:text-base
+
+                            md:max-w-2xl
+                            md:text-lg
+
+                            lg:max-w-4xl
+                            lg:text-xl
+
+                            xl:max-w-6xl
+                        "
+                    >
+                        {paragraph}
+                    </p>
+                )}
             </div>
 
-            {/* BOTTOM BAR */}
-            <div className="absolute bottom-8 left-0 w-full flex justify-between items-center px-16">
+            {/* Bottom Bar */}
+            <div
+                className="
+                    absolute
+                    bottom-6
+                    left-0
+                    w-full
 
-                {/* LEFT */}
+                    flex
+                    flex-row
+                    items-center
+                    justify-between
+                    gap-4
+
+                    px-6
+
+                    sm:flex-row
+                    sm:justify-between
+                    sm:px-8
+
+                    lg:px-16
+                "
+            >
+                {/* Left */}
                 <div
                     ref={(el) => (heroRef.current[3] = el)}
-                    className="flex items-center gap-4"
+                    className="flex items-center gap-3"
                 >
-
-                    <span className="text-[18px] font-medium">
+                    <span className="text-sm font-medium sm:text-base lg:text-lg">
                         {leftBottomText}
                     </span>
-                    <span className="text-[22px]">{leftBottomIcon}</span>
+
+                    {leftBottomIcon && (
+                        <span className="text-lg sm:text-xl">
+                            {leftBottomIcon}
+                        </span>
+                    )}
                 </div>
 
-                {/* RIGHT */}
+                {/* Right */}
                 <div ref={(el) => (heroRef.current[4] = el)}>
-                    <span className="text-[18px] font-medium">
+                    <span className="text-sm font-medium sm:text-base lg:text-lg">
                         {rightBottomText}
                     </span>
                 </div>
-
             </div>
         </section>
     );

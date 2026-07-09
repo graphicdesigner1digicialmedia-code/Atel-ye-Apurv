@@ -14,10 +14,14 @@ export default function Button() {
     const clamp = (value, max) => Math.max(-max, Math.min(max, value));
 
     const handleMouseEnter = () => {
+        // Disable magnetic effect on touch devices
+        if (window.innerWidth < 768) return;
         setTracking(true);
     };
 
     const handleMouseMove = (e) => {
+        if (window.innerWidth < 768) return;
+
         if (!btnRef.current || !textRef.current) return;
 
         const rect = btnRef.current.getBoundingClientRect();
@@ -41,34 +45,68 @@ export default function Button() {
     const handleMouseLeave = () => {
         setTracking(false);
 
-        btnRef.current.style.transform = "translate(0px, 0px)";
-        textRef.current.style.transform = "translate(0px, 0px)";
+        if (!btnRef.current || !textRef.current) return;
+
+        btnRef.current.style.transform = "translate(0px,0px)";
+        textRef.current.style.transform = "translate(0px,0px)";
     };
 
     return (
-        <div className="flex items-center justify-center bg-black">
-            {/* Magnetic hit zone */}
+        <div className="flex items-center justify-center bg-black px-4">
+
             <div
-                className="inline-block p-10"
+                className="inline-block p-4 sm:p-6 md:p-8 lg:p-10"
                 onMouseEnter={handleMouseEnter}
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
             >
                 <button
                     ref={btnRef}
-                    className={`relative overflow-hidden border border-white rounded-full px-14 py-5 bg-transparent cursor-pointer select-none tracking-[0.12em]
-          ${tracking
+                    className={`
+                        relative
+                        overflow-hidden
+                        rounded-full
+                        border
+                        border-white
+                        bg-transparent
+                        cursor-pointer
+                        select-none
+                        whitespace-nowrap
+
+                        px-6 py-3
+                        sm:px-8 sm:py-3.5
+                        md:px-10 md:py-4
+                        lg:px-14 lg:py-5
+
+                        tracking-[0.08em]
+                        sm:tracking-[0.12em]
+
+                        ${tracking
                             ? "transition-none"
                             : "transition-transform duration-500 ease-[cubic-bezier(0.175,0.885,0.32,1.275)]"
-                        }`}
+                        }
+                    `}
                 >
                     <span
                         ref={textRef}
-                        className={`relative inline-block text-white text-[15px] font-semibold uppercase pointer-events-none
-            ${tracking
+                        className={`
+                            relative
+                            inline-block
+                            pointer-events-none
+                            uppercase
+                            font-semibold
+                            text-white
+
+                            text-xs
+                            sm:text-sm
+                            md:text-[15px]
+                            lg:text-base
+
+                            ${tracking
                                 ? "transition-none"
                                 : "transition-transform duration-500 ease-[cubic-bezier(0.175,0.885,0.32,1.275)]"
-                            }`}
+                            }
+                        `}
                     >
                         See All Works
                     </span>

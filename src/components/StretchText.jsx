@@ -1,176 +1,188 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import gsap from "gsap";
 
-export default function StretchText({ text }) {
-    const targetRef = useRef(null);
+export default function StretchText({ text = "CONTACT" }) {
     const wrapRef = useRef(null);
     const cursorRef = useRef(null);
+    const letterRefs = useRef([]);
+
+    const letters = useMemo(() => [...text], [text]);
 
     useEffect(() => {
-        const target = targetRef.current;
         const wrap = wrapRef.current;
         const cursor = cursorRef.current;
 
-        const mouse = {
+        let mouse = {
             x: window.innerWidth / 2,
             y: window.innerHeight / 2,
         };
 
-        const pos = {
+        let pos = {
             x: mouse.x,
             y: mouse.y,
         };
 
-        const LERP_SPEED = 0.5;
-        const INFLUENCE_RADIUS = 300;
-        const MAX_STRETCH = 2;
+        const LERP = 0.12;
+        const RADIUS = 260;
+        const MAX_SCALE = 1.2;
 
-        // ---------------- Split Text ----------------
+        //----------------------------------
+        // Mouse
+        //----------------------------------
 
-        const rawText = target.textContent;
-        target.innerHTML = "";
-
-        const letters = [...rawText].map((char) => {
-            const span = document.createElement("span");
-
-            span.className =
-                "inline-block leading-[0.82] origin-top will-change-transform";
-
-            span.textContent = char;
-
-            if (char === " ") span.style.whiteSpace = "pre";
-
-            target.appendChild(span);
-
-            return {
-                el: span,
-                cx: 0,
-                cy: 0,
-                scaleSetter: gsap.quickTo(span, "scaleY", {
-                    duration: 0.45,
-                    ease: "power3.out",
-                }),
-            };
-        });
-
-        // ---------------- Measure ----------------
-
-        function measureLetters() {
-            letters.forEach((letter) => {
-                const rect = letter.el.getBoundingClientRect();
-
-                letter.cx = rect.left + rect.width / 2;
-                letter.cy = rect.top;
-            });
-        }
-
-        measureLetters();
-
-        // ---------------- Mouse ----------------
-
-        const mouseMove = (e) => {
+        const move = (e) => {
             mouse.x = e.clientX;
             mouse.y = e.clientY;
         };
 
-        window.addEventListener("mousemove", mouseMove);
-        window.addEventListener("resize", measureLetters);
+        window.addEventListener("mousemove", move);
 
-        // ---------------- Hover ----------------
+        //----------------------------------
+        // Hover
+        //----------------------------------
 
-        const enter = () => cursor.classList.add("opacity-100", "scale-60");
+        const container = wrap.parentElement;
 
-        const leave = () => cursor.classList.remove("opacity-100", "scale-60");
+        const enter = () => {
+            gsap.to(cursor, {
+                scale: 1,
+                opacity: 1,
+                duration: 0.35,
+                ease: "power3.out",
+            });
+        };
 
-        target.addEventListener("mouseenter", enter);
-        target.addEventListener("mouseleave", leave);
+        const leave = () => {
+            gsap.to(cursor, {
+                scale: 0,
+                opacity: 0,
+                duration: 0.35,
+                ease: "power3.out",
+            });
 
-        // ---------------- RAF ----------------
+            letterRefs.current.forEach((el) => {
+                gsap.to(el, {
+                    scaleY: 1,
+                    duration: 0.4,
+                    ease: "power3.out",
+                });
+            });
+        };
 
-        let raf;
+        container.addEventListener("mouseenter", enter);
+        container.addEventListener("mouseleave", leave);
 
-        const tick = () => {
-            pos.x += (mouse.x - pos.x) * LERP_SPEED;
-            pos.y += (mouse.y - pos.y) * LERP_SPEED;
+        //----------------------------------
+        // Animation Loop
+        //----------------------------------
 
-            wrap.style.transform = `translate3d(${pos.x}px, ${pos.y}px,0) translate(-50%,-50%)`;
+        const render = () => {
+            pos.x += (mouse.x - pos.x) * LERP;
+            pos.y += (mouse.y - pos.y) * LERP;
 
-            letters.forEach((letter) => {
-                const dx = mouse.x - letter.cx;
-                const dy = mouse.y - letter.cy;
+            gsap.set(wrap, {
+                x: pos.x,
+                y: pos.y,
+            });
+
+            letterRefs.current.forEach((el) => {
+                if (!el) return;
+
+                const rect = el.getBoundingClientRect();
+
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+
+                const dx = pos.x - cx;
+                const dy = pos.y - cy;
 
                 const dist = Math.sqrt(dx * dx + dy * dy);
 
-                let t = Math.max(0, 1 - dist / INFLUENCE_RADIUS);
+                let t = Math.max(0, 1 - dist / RADIUS);
 
+                // Smoothstep
                 t = t * t * (3 - 2 * t);
 
-                const scaleY = 1 + t * (MAX_STRETCH - 1);
-
-                letter.scaleSetter(scaleY);
+                gsap.set(el, {
+                    scaleY: 1 + t * (MAX_SCALE - 1),
+                });
             });
-
-            raf = requestAnimationFrame(tick);
         };
 
-        tick();
+        gsap.ticker.add(render);
 
-        // ---------------- Cleanup ----------------
+        //----------------------------------
+        // Cleanup
+        //----------------------------------
 
         return () => {
-            cancelAnimationFrame(raf);
+            gsap.ticker.remove(render);
 
-            window.removeEventListener("mousemove", mouseMove);
-            window.removeEventListener("resize", measureLetters);
+            window.removeEventListener("mousemove", move);
 
-            target.removeEventListener("mouseenter", enter);
-            target.removeEventListener("mouseleave", leave);
-
-            target.innerHTML = rawText;
+            container.removeEventListener("mouseenter", enter);
+            container.removeEventListener("mouseleave", leave);
         };
     }, []);
 
     return (
-        <div className="relative flex h-[30vh] items-center justify-center overflow-hidden bg-[#000000] cursor-none">
+        <section className="relative h-[40vh] flex items-center justify-center overflow-hidden bg-black cursor-none">
+
             <h1
-                ref={targetRef}
-                className="select-none whitespace-nowrap font-['Archivo_Narrow'] text-[clamp(100px,10vw,260px)] font-bold uppercase tracking-[-2px] text-white cursor-none"
+                className="
+                    text-white
+                    uppercase
+                    font-black
+                    tracking-[-0.04em]
+                    leading-none
+                    text-[clamp(70px,12vw,220px)]
+                    select-none
+                    whitespace-nowrap
+                    font-['Archivo_Narrow']
+                "
             >
-                {text}
+                {letters.map((letter, i) => (
+                    <span
+                        key={i}
+                        ref={(el) => (letterRefs.current[i] = el)}
+                        className="inline-block origin-bottom will-change-transform"
+                    >
+                        {letter === " " ? "\u00A0" : letter}
+                    </span>
+                ))}
             </h1>
 
             {/* Cursor */}
+
             <div
                 ref={wrapRef}
-                className="fixed left-0 top-0 z-[999] h-0 w-0 pointer-events-none"
+                className="fixed left-0 top-0 pointer-events-none z-[9999]"
             >
                 <div
                     ref={cursorRef}
                     className="
-            flex
-            h-[140px]
-            w-[140px]
-            -translate-x-1/2
-            -translate-y-1/2
-            scale-0
-            items-center
-            justify-center
-            rounded-full
-            bg-gradient-to-b
-            from-[#f4f4f4]
-            via-[#d9d9d9]
-            to-[#a8a8a8]
-            opacity-0
-            transition-all
-            duration-500
-            ease-[cubic-bezier(0.16,1,0.3,1)]
-          "
+                        w-32
+                        h-32
+                        rounded-full
+                        scale-0
+                        opacity-0
+                        -translate-x-1/2
+                        -translate-y-1/2
+                        flex
+                        items-center
+                        justify-center
+                        bg-gradient-to-b
+                        from-white
+                        via-neutral-200
+                        to-neutral-400
+                        shadow-2xl
+                    "
                 >
-                    <span className="font-['Archivo_Narrow'] text-sm font-semibold tracking-[0.05em] text-[#111]">
+                    <span className="text-black text-sm font-semibold uppercase tracking-wider">
                         {text}
                     </span>
                 </div>
             </div>
-        </div>
+        </section>
     );
 }

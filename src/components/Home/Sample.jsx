@@ -1,114 +1,176 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
-const Hero = () => {
-    const heroRef = useRef([]);
+export default function StretchText({ text }) {
+    const targetRef = useRef(null);
+    const wrapRef = useRef(null);
+    const cursorRef = useRef(null);
 
     useEffect(() => {
-        gsap.fromTo(
-            heroRef.current,
-            {
-                y: 120,
-                opacity: 0,
-            },
-            {
-                y: 0,
-                opacity: 1,
-                stagger: 0.08,
-                duration: 1.2,
-                ease: "expo.out",
-            }
-        );
+        const target = targetRef.current;
+        const wrap = wrapRef.current;
+        const cursor = cursorRef.current;
+
+        const mouse = {
+            x: window.innerWidth / 2,
+            y: window.innerHeight / 2,
+        };
+
+        const pos = {
+            x: mouse.x,
+            y: mouse.y,
+        };
+
+        const LERP_SPEED = 0.5;
+        const INFLUENCE_RADIUS = 300;
+        const MAX_STRETCH = 2;
+
+        // ---------------- Split Text ----------------
+
+        const rawText = target.textContent;
+        target.innerHTML = "";
+
+        const letters = [...rawText].map((char) => {
+            const span = document.createElement("span");
+
+            span.className =
+                "inline-block leading-[0.82] origin-top will-change-transform";
+
+            span.textContent = char;
+
+            if (char === " ") span.style.whiteSpace = "pre";
+
+            target.appendChild(span);
+
+            return {
+                el: span,
+                cx: 0,
+                cy: 0,
+                scaleSetter: gsap.quickTo(span, "scaleY", {
+                    duration: 0.45,
+                    ease: "power3.out",
+                }),
+            };
+        });
+
+        // ---------------- Measure ----------------
+
+        function measureLetters() {
+            letters.forEach((letter) => {
+                const rect = letter.el.getBoundingClientRect();
+
+                letter.cx = rect.left + rect.width / 2;
+                letter.cy = rect.top;
+            });
+        }
+
+        measureLetters();
+
+        // ---------------- Mouse ----------------
+
+        const mouseMove = (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        };
+
+        window.addEventListener("mousemove", mouseMove);
+        window.addEventListener("resize", measureLetters);
+
+        // ---------------- Hover ----------------
+
+        const enter = () => cursor.classList.add("opacity-100", "scale-60");
+
+        const leave = () => cursor.classList.remove("opacity-100", "scale-60");
+
+        target.addEventListener("mouseenter", enter);
+        target.addEventListener("mouseleave", leave);
+
+        // ---------------- RAF ----------------
+
+        let raf;
+
+        const tick = () => {
+            pos.x += (mouse.x - pos.x) * LERP_SPEED;
+            pos.y += (mouse.y - pos.y) * LERP_SPEED;
+
+            wrap.style.transform = `translate3d(${pos.x}px, ${pos.y}px,0) translate(-50%,-50%)`;
+
+            letters.forEach((letter) => {
+                const dx = mouse.x - letter.cx;
+                const dy = mouse.y - letter.cy;
+
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                let t = Math.max(0, 1 - dist / INFLUENCE_RADIUS);
+
+                t = t * t * (3 - 2 * t);
+
+                const scaleY = 1 + t * (MAX_STRETCH - 1);
+
+                letter.scaleSetter(scaleY);
+            });
+
+            raf = requestAnimationFrame(tick);
+        };
+
+        tick();
+
+        // ---------------- Cleanup ----------------
+
+        return () => {
+            cancelAnimationFrame(raf);
+
+            window.removeEventListener("mousemove", mouseMove);
+            window.removeEventListener("resize", measureLetters);
+
+            target.removeEventListener("mouseenter", enter);
+            target.removeEventListener("mouseleave", leave);
+
+            target.innerHTML = rawText;
+        };
     }, []);
 
     return (
-        <section className="relative h-screen w-full bg-black text-white flex flex-col items-center justify-center overflow-hidden px-8">
+        <div className="relative flex h-[30vh] items-center justify-center overflow-hidden bg-[#000000] cursor-none">
+            <h1
+                ref={targetRef}
+                className="select-none whitespace-nowrap font-['Archivo_Narrow'] text-[clamp(100px,10vw,260px)] font-bold uppercase tracking-[-2px] text-white cursor-none"
+            >
+                {text}
+            </h1>
 
-            {/* HERO TEXT */}
-            <div className="flex flex-col items-center">
-
-                {/* FIRST LINE */}
-                <h1
-                    ref={(el) => (heroRef.current[0] = el)}
-                    className="
-                        font-anton
-                        uppercase
-                        text-[30px]
-                        tracking-[45px]
-                        leading-[4]
-                        text-center
-                        sm:text-[25px]
-                        md:text-[25px]
-                        lg:text-[25px]
-                        xl:text-[25px]
-                    "
-                >
-                    Top Architecture and Interior
-                </h1>
-
-                {/* SECOND LINE */}
-                <h1
-                    ref={(el) => (heroRef.current[1] = el)}
-                    className="
-                        font-anton
-                        uppercase
-                        text-[30px]
-                        tracking-[45px]
-                        leading-[1.8]
-                        text-center
-                        -mt-8
-                        sm:text-[25px]
-                        md:text-[25px]
-                        lg:text-[25px]
-                        xl:text-[25px]
-                    "
-                >
-                    Design Firm in India
-                </h1>
-
-                {/* SUBTEXT */}
-                <p
-                    ref={(el) => (heroRef.current[2] = el)}
-                    className="
-                        mt-4
-                        w-[90%]
-                        max-w-[1400px]
-                        text-center
-                        text-white/60
-                        text-[20px]
-                        font-normal
-                        leading-relaxed
-                    "
-                >
-                    We are a design studio specializing in architecture and interiors,
-                    redefining the art of spatial storytelling with bold ideas and creative exploration.
-                </p>
-            </div>
-
-            {/* BOTTOM BAR */}
-            <div className="absolute bottom-8 left-0 w-full flex justify-between items-center px-16">
-
-                {/* LEFT */}
+            {/* Cursor */}
+            <div
+                ref={wrapRef}
+                className="fixed left-0 top-0 z-[999] h-0 w-0 pointer-events-none"
+            >
                 <div
-                    ref={(el) => (heroRef.current[3] = el)}
-                    className="flex items-center gap-4"
+                    ref={cursorRef}
+                    className="
+            flex
+            h-[140px]
+            w-[140px]
+            -translate-x-1/2
+            -translate-y-1/2
+            scale-0
+            items-center
+            justify-center
+            rounded-full
+            bg-gradient-to-b
+            from-[#f4f4f4]
+            via-[#d9d9d9]
+            to-[#a8a8a8]
+            opacity-0
+            transition-all
+            duration-500
+            ease-[cubic-bezier(0.16,1,0.3,1)]
+          "
                 >
-                    <span className="text-[18px] font-medium">
-                        Scroll to Explore
-                    </span>
-                    <span className="text-[22px]">⌄</span>
-                </div>
-
-                {/* RIGHT */}
-                <div ref={(el) => (heroRef.current[4] = el)}>
-                    <span className="text-[18px] font-medium">
-                        Featured Projects
+                    <span className="font-['Archivo_Narrow'] text-sm font-semibold tracking-[0.05em] text-[#111]">
+                        {text}
                     </span>
                 </div>
-
             </div>
-        </section>
+        </div>
     );
-};
-
-export default Hero;
+}

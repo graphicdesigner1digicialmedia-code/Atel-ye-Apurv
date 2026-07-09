@@ -1,18 +1,19 @@
-import React from 'react'
+import React from "react";
 
 const Paragraph = () => {
     return (
-        <section className="w-full bg-black px-6 pt-28 pb-12 md:px-20 lg:px-40">
+        <section className="w-full bg-black px-6 py-16 sm:px-8 md:px-12 lg:px-20 xl:px-40">
             <div className="mx-auto max-w-6xl text-center">
-                {/* Small Intro */}
-                <p className=" mx-auto max-w-3xl text-[16px] text-gray-400 md:text-[20px]">
-                    Designing spaces where the artistry of architecture
-                    meets the purpose of human connection.
-                </p>
 
-                {/* Main Content */}
-                <div className="mt-1 ">
-                    <p className="text-[16px] text-gray-400 md:text-[20px]">
+
+
+                {/* Content */}
+                <div className="mt-8 space-y-1">
+                    <p className="mx-auto max-w-3xl text-sm leading-relaxed text-gray-400 sm:text-base md:text-lg lg:text-xl">
+                        Designing spaces where the artistry of architecture meets
+                        the purpose of human connection.
+                    </p>
+                    <p className="mx-auto max-w-5xl text-sm leading-relaxed text-gray-400 sm:text-base md:text-lg lg:text-xl">
                         As the{" "}
                         <span className="font-semibold text-white">
                             best interior designers in Delhi
@@ -22,7 +23,7 @@ const Paragraph = () => {
                         and lasting emotional connection.
                     </p>
 
-                    <p className="text-[16px] text-gray-400 md:text-[20px]">
+                    <p className="mx-auto max-w-5xl text-sm leading-relaxed text-gray-400 sm:text-base md:text-lg lg:text-xl">
                         At Inspatia, we are recognized as the{" "}
                         <span className="font-semibold text-white">
                             best architecture firm in India
@@ -51,9 +52,10 @@ const Paragraph = () => {
                         but deeply meaningful.
                     </p>
                 </div>
+
             </div>
         </section>
     );
 };
 
-export default Paragraph
+export default Paragraph;
