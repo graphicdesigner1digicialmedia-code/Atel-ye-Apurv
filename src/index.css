@@ -22,3 +22,36 @@ body {
     font-family: "Anton", sans-serif;
     font-weight: 400;
 }
+
+
+
+/* PortfolioCard.jsx image reveal transaction */
+
+.curtain {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.blind {
+    flex: 1;
+    background: #000;
+    /* same as page background */
+    transform: scaleY(1);
+    transform-origin: center;
+    will-change: transform;
+}
+
+/* Hide Horizontal Scrollbar */
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}

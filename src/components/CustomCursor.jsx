@@ -1,20 +1,39 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
 const CustomCursor = () => {
     const cursorRef = useRef(null);
+    const [isDesktop, setIsDesktop] = useState(false);
 
     useEffect(() => {
+        const media = window.matchMedia("(hover: hover) and (pointer: fine)");
+
+        const updateDevice = () => {
+            setIsDesktop(media.matches);
+        };
+
+        updateDevice();
+
+        media.addEventListener("change", updateDevice);
+
+        return () => {
+            media.removeEventListener("change", updateDevice);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!isDesktop) return;
+
         const cursor = cursorRef.current;
 
         const xTo = gsap.quickTo(cursor, "x", {
             duration: 0.4,
-            ease: "power3",
+            ease: "power3.out",
         });
 
         const yTo = gsap.quickTo(cursor, "y", {
             duration: 0.4,
-            ease: "power3",
+            ease: "power3.out",
         });
 
         const moveCursor = (e) => {
@@ -24,12 +43,15 @@ const CustomCursor = () => {
 
         window.addEventListener("mousemove", moveCursor);
 
-        const hoverTargets = document.querySelectorAll("a, h1, h2, button");
+        const hoverTargets = document.querySelectorAll(
+            "a, button, h1, h2, h3"
+        );
 
         const handleEnter = () => {
             gsap.to(cursor, {
                 scale: 2.5,
                 duration: 0.3,
+                ease: "power2.out",
             });
         };
 
@@ -37,6 +59,7 @@ const CustomCursor = () => {
             gsap.to(cursor, {
                 scale: 1,
                 duration: 0.3,
+                ease: "power2.out",
             });
         };
 
@@ -53,12 +76,26 @@ const CustomCursor = () => {
                 el.removeEventListener("mouseleave", handleLeave);
             });
         };
-    }, []);
+    }, [isDesktop]);
+
+    // Don't render the cursor on mobile/tablet
+    if (!isDesktop) return null;
 
     return (
         <div
             ref={cursorRef}
-            className="fixed top-0 left-0 w-10 h-10 rounded-full bg-white pointer-events-none z-[9999] mix-blend-difference"
+            className="
+        fixed
+        top-0
+        left-0
+        w-10
+        h-10
+        rounded-full
+        bg-white
+        pointer-events-none
+        z-[9999]
+        mix-blend-difference
+      "
         />
     );
 };

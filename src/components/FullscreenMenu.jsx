@@ -20,8 +20,8 @@ const FullscreenMenu = ({ menuOpen, setMenuOpen }) => {
                 }`}
         >
             {/* MENU CONTAINER */}
-            <div className="h-screen overflow-y-auto flex justify-center px-4 pt-28 pb-28">
-                <ul className="flex flex-col items-center leading-[0.82] gap-3 min-h-max">
+            <div className="h-screen overflow-y-auto flex justify-end sm:justify-center px-6 sm:px-4 pt-28 pb-28">
+                <ul className="flex flex-col items-end sm:items-center text-right sm:text-center leading-[0.82] gap-3 min-h-max">
                     {menuItems.map((item, index) => (
                         <li key={item.title} className="overflow-hidden">
                             <Link
@@ -45,8 +45,8 @@ const FullscreenMenu = ({ menuOpen, setMenuOpen }) => {
                                 style={{
                                     transitionDelay: `${index * 100}ms`,
                                     transform: menuOpen
-                                        ? "translateX(0px)"
-                                        : "translateX(-120px)",
+                                        ? "translateX(0)"
+                                        : "translateX(120px)",
                                     opacity: menuOpen ? 1 : 0,
                                 }}
                             >
