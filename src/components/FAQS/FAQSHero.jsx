@@ -1,5 +1,6 @@
 import React from 'react'
 import Hero from '../Hero'
+import FAQ from './FAQ'
 
 const FAQSHero = () => {
     return (
@@ -8,6 +9,7 @@ const FAQSHero = () => {
                 firstLine="FREQUENTLY ASKED QUESTIONS"
                 secondLine="(FAQ)"
             />
+            <FAQ />
         </>
     )
 }

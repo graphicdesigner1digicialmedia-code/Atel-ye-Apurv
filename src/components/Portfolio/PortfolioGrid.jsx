@@ -19,7 +19,6 @@ export default function PortfolioGrid({
   // -------------------------------
   // Save layout before filtering
   // -------------------------------
-
   useLayoutEffect(() => {
     if (!gridRef.current) return;
 
@@ -28,23 +27,20 @@ export default function PortfolioGrid({
     const next =
       activeFilter === "All"
         ? projects
-        : projects.filter(
-          (p) => p.category === activeFilter
-        );
+        : projects.filter((p) => p.category === activeFilter);
 
     setFilteredProjects(next);
 
   }, [activeFilter, projects]);
 
   // -------------------------------
-  // Animate Filter
+  // Animate filter change
   // -------------------------------
-
   useLayoutEffect(() => {
     if (!flipState.current) return;
 
     Flip.from(flipState.current, {
-      duration: 0.9,
+      duration: 1,
       ease: "power4.inOut",
       absolute: true,
       nested: true,
@@ -52,12 +48,11 @@ export default function PortfolioGrid({
       stagger: 0.05,
 
       onEnter(elements) {
-
         gsap.fromTo(
           elements,
           {
             opacity: 0,
-            y: 30,
+            y: 40,
             scale: 0.96,
           },
           {
@@ -71,104 +66,97 @@ export default function PortfolioGrid({
         );
 
         gsap.fromTo(
-          elements.map((el) =>
-            el.querySelector(".portfolio-image")
-          ),
+          elements.map((el) => el.querySelector(".portfolio-image")),
           {
-            scale: 1.12,
+            scale: 1.15,
           },
           {
             scale: 1,
             duration: 1.2,
             ease: "power4.out",
+            stagger: 0.04,
           }
         );
       },
 
       onLeave(elements) {
+        gsap.to(
+          elements.map((el) => el.querySelector(".portfolio-image")),
+          {
+            scale: 0.88,
+            duration: 0.45,
+            ease: "power3.out",
+          }
+        );
 
         gsap.to(elements, {
           opacity: 0,
-          scale: 0.95,
+          scale: 0.94,
           y: -20,
-          duration: 0.4,
+          duration: 0.45,
           ease: "power3.out",
         });
-
       },
-
     });
-
   }, [filteredProjects]);
 
   // -------------------------------
-  // Desktop Parallax Only
+  // Floating / Parallax Effect
   // -------------------------------
-
   useLayoutEffect(() => {
-    const mm = gsap.matchMedia();
+    if (!gridRef.current) return;
 
-    mm.add("(min-width: 1024px)", () => {
+    const ctx = gsap.context(() => {
 
-      const ctx = gsap.context(() => {
+      gsap.utils.toArray(".portfolio-card").forEach((card) => {
 
-        gsap.utils
-          .toArray(".portfolio-card")
-          .forEach((card) => {
+        const image = card.querySelector(".portfolio-image");
 
-            const image =
-              card.querySelector(".portfolio-image");
+        // Floating Card
+        gsap.fromTo(
+          card,
+          {
+            y: 40,
+          },
+          {
+            y: -40,
+            ease: "none",
+            scrollTrigger: {
+              trigger: card,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true,
+            },
+          }
+        );
 
-            gsap.fromTo(
-              card,
-              {
-                y: 40,
+        // Image Parallax
+        if (image) {
+          gsap.fromTo(
+            image,
+            {
+              yPercent: -10,
+              scale: 1.12,
+            },
+            {
+              yPercent: 10,
+              scale: 1.12,
+              ease: "none",
+              scrollTrigger: {
+                trigger: card,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true,
               },
-              {
-                y: -40,
-                ease: "none",
-                scrollTrigger: {
-                  trigger: card,
-                  start: "top bottom",
-                  end: "bottom top",
-                  scrub: true,
-                },
-              }
-            );
-
-            if (image) {
-
-              gsap.fromTo(
-                image,
-                {
-                  yPercent: -10,
-                  scale: 1.12,
-                },
-                {
-                  yPercent: 10,
-                  scale: 1.12,
-                  ease: "none",
-                  scrollTrigger: {
-                    trigger: card,
-                    start: "top bottom",
-                    end: "bottom top",
-                    scrub: true,
-                  },
-                }
-              );
-
             }
+          );
+        }
 
-          });
+      });
 
-      }, gridRef);
+    }, gridRef);
 
-      return () => ctx.revert();
-
-    });
-
-    return () => mm.revert();
-
+    return () => ctx.revert();
   }, [filteredProjects]);
 
   const rows = [];
@@ -178,73 +166,46 @@ export default function PortfolioGrid({
   }
 
   return (
-    <section className="py-12 md:py-16 xl:py-24">
+    <section className="py-24">
 
       <div
         ref={gridRef}
-        className="
-          max-w-[1800px]
-          mx-auto
-
-          px-4
-          sm:px-6
-          md:px-8
-          lg:px-10
-          xl:px-14
-          2xl:px-16
-
-          space-y-10
-          md:space-y-16
-          xl:space-y-32
-        "
+        className="max-w-[1800px] mx-auto px-5 sm:px-8 lg:px-12 xl:px-16 space-y-12 sm:space-y-20 lg:space-y-40"
       >
-
         {rows.map((row, index) => {
 
           const reverse = index % 2 !== 0;
 
           return (
-
             <div
               key={index}
               className={`
                 grid
                 grid-cols-1
-                xl:grid-cols-2
-
-                gap-8
-                sm:gap-10
-                md:gap-14
-                lg:gap-16
-                xl:gap-32
-                2xl:gap-40
-
-                items-start
-
-                ${reverse
-                  ? "xl:[&>*:first-child]:order-2"
-                  : ""
-                }
+                lg:grid-cols-2
+                gap-12
+                md:gap-20
+                lg:gap-40
+                items-center
+                ${reverse ? "lg:[&>*:first-child]:order-2" : ""}
               `}
             >
-
               <PortfolioCard
+                key={row[0].id}
                 project={row[0]}
                 large
               />
 
               {row[1] && (
                 <PortfolioCard
+                  key={row[1].id}
                   project={row[1]}
                 />
               )}
-
             </div>
-
           );
 
         })}
-
       </div>
 
     </section>
