@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 
+
+
 const menuItems = [
     { title: "Home", path: "/" },
     { title: "Portfolio", path: "/portfolio" },
@@ -8,6 +10,7 @@ const menuItems = [
     { title: "Awards", path: "/awards" },
     { title: "Services", path: "/services" },
     { title: "FAQS", path: "/faqs" },
+    { title: "Career", path: "/career" },
     { title: "Blogs", path: "/blogs" },
 ];
 

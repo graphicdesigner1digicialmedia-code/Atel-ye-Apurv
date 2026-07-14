@@ -8,7 +8,7 @@ const PortfolioHero = ({
     return (
         <Hero
             firstLine="Portfolio"
-            secondLine="Architecture"
+            secondLine="interior Designer"
             paragraph={
                 <>
                     We are a design studio specializing in architecture and interiors,

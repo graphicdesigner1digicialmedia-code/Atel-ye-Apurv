@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import AppRouter from "./router/AppRouter";

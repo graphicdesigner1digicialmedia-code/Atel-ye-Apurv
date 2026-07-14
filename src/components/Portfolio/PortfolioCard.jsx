@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { Link } from "react-router-dom";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -55,9 +56,9 @@ export default function PortfolioCard({
     }, []);
 
     return (
-        <a
+        <Link
             ref={cardRef}
-            href={project.href}
+            to={`/project/${project.slug}`}
             className="portfolio-card group block"
         >
             {/* IMAGE */}
@@ -75,16 +76,16 @@ export default function PortfolioCard({
         `}
             >
                 <img
-                    src={project.image}
+                    src={project.coverImage}
                     alt={project.title}
                     className="
-            portfolio-image
-            w-full
-            h-full
-            object-cover
-            scale-[1.12]
-            will-change-transform
-          "
+        portfolio-image
+        w-full
+        h-full
+        object-cover
+        scale-[1.12]
+        will-change-transform
+    "
                 />
 
                 {/* Curtain */}
@@ -171,6 +172,7 @@ export default function PortfolioCard({
                 </div>
 
             </div>
-        </a>
+        </Link>
+
     );
 }
